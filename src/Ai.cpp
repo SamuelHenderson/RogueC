@@ -37,9 +37,9 @@ void MonsterAi::moveOrAttack(Actor *owner, int targetx, int targety) {
 			owner->x += stepdx;
 		} else if(engine.map->canWalk(owner->x, owner->y + stepdy)) {
 			owner->y += stepdy;
-		} else if (owner->attacker) {
-			owner->attacker->attack(owner, engine.player);
-		}
+		} 		
+	} else if (owner->attacker) {
+		owner->attacker->attack(owner, engine.player);
 	}
 }
 
@@ -77,7 +77,7 @@ bool PlayerAi::moveOrAttack(Actor *owner, int targetx, int targety) {
 	for(Actor **iterator = engine.actors.begin(); iterator != engine.actors.end(); iterator++) {
 		Actor *actor = *iterator;
 		if(actor->destructible && actor->destructible->isDead() && actor->x == targetx && actor->y == targety) {
-			printf("There's a %s here\n", actor->name);
+			engine.gui->message(TCODColor::lightGrey,"There's a %s here\n", actor->name);
 		}
 	}
 	
