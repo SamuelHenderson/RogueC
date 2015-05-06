@@ -9,6 +9,7 @@ public:
 	} gameStatus;
 	
 	TCOD_key_t lastKey;
+	TCOD_mouse_t mouse;
 	TCODList<Actor *> actors;
 	Actor *player;
 	Map *map;

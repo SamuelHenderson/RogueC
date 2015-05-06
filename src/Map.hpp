@@ -15,6 +15,7 @@ public:
 	bool isExplored(int x, int y) const;
 	void computeFov();
 	void render() const;
+	void addItem(int x, int y);
 protected:
 	Tile *tiles;
 	TCODMap *map;

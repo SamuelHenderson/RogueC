@@ -25,8 +25,7 @@ void MonsterAi::moveOrAttack(Actor *owner, int targetx, int targety) {
 	int dy = targety - owner->y;
 	int stepdx = (dx > 0 ? 1 : -1);
 	int stepdy = (dy > 0 ? 1 : -1);
-	float distance=sqrtf(dx*dx + dy*dy);
-	
+	float distance=sqrtf(dx*dx + dy*dy);	
 	if(distance >= 2) {
 		dx = (int)(round(dx/distance));
 		dy = (int)(round(dy/distance));
@@ -53,6 +52,7 @@ void PlayerAi::update(Actor *owner) {
 		case TCODK_DOWN: dy = 1; break;
 		case TCODK_LEFT: dx = -1; break;
 		case TCODK_RIGHT: dx = 1; break;
+		case TCODK_CHAR: handleActionKey(owner, engine.lastKey.c); break;
 		default: break;
 	}
 	if(dx != 0 || dy != 0) {
@@ -73,15 +73,46 @@ bool PlayerAi::moveOrAttack(Actor *owner, int targetx, int targety) {
 			return false;
 		}
 	}
-	// look for corpses
-	for(Actor **iterator = engine.actors.begin(); iterator != engine.actors.end(); iterator++) {
+	// look for corpses or items
+	for(Actor **iterator = engine.actors.begin(); 
+		iterator != engine.actors.end(); iterator++) {
 		Actor *actor = *iterator;
-		if(actor->destructible && actor->destructible->isDead() && actor->x == targetx && actor->y == targety) {
-			engine.gui->message(TCODColor::lightGrey,"There's a %s here\n", actor->name);
+		bool corpseOrItem=(actor->destructible && actor->destructible->isDead())
+			|| actor->pickable;
+		if(corpseOrItem && actor->x == targetx && actor->y == targety) {
+			engine.gui->message(TCODColor::lightGrey,"There's a %s here", actor->name);
 		}
 	}
 	
 	owner->x=targetx;
 	owner->y=targety;
 	return true;
+}
+
+void PlayerAi::handleActionKey(Actor *owner, int ascii) {
+	switch(ascii) {
+		case 'g': //pickup item
+		{
+			bool found = false;
+			for (Actor **iterator=engine.actors.begin();
+				iterator != engine.actors.end(); iterator++) {
+				Actor *actor = *iterator;
+				if(actor->pickable && actor->x == owner->x && actor->y == owner->y) {
+					if(actor->pickable->pick(actor, owner)) {
+						found = true;
+						engine.gui->message(TCODColor::lightGrey, "You pick the %s.", actor->name);
+						break;
+					} else if(!found) {
+						found = true;
+						engine.gui->message(TCODColor::red, "Your inventory is full.");
+					}
+				}
+			}
+			if(!found) {
+				engine.gui->message(TCODColor::lightGrey, "There's nothing here that you can pick.");
+			}
+			engine.gameStatus=Engine::NEW_TURN;
+		}
+		break;
+	}
 }
