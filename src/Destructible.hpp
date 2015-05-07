@@ -10,6 +10,8 @@ public:
 	float takeDamage(Actor *owner, float damage);
 	float heal(float amount);
 	virtual void die(Actor *owner);	
+	//protected:
+	//~Destructible();
 };
 
 class MonsterDestructible : public Destructible {

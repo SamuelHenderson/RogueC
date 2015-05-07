@@ -21,4 +21,5 @@ public:
 	
 protected:
 	bool moveOrAttack(Actor *owner, int targetx, int targety);
+	Actor *choseFromInventory(Actor *owner);
 };

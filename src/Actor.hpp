@@ -15,6 +15,5 @@ public:
 	Actor(int x, int y, int ch, const char *name, const TCODColor &col);
 	~Actor();
 	void update();
-	//bool moveOrAttack(int x, int y);
 	void render() const;
 };
