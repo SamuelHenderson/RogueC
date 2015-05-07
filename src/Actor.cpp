@@ -1,3 +1,4 @@
+#include <math.h>
 #include "main.hpp"
 
 Actor::Actor(int x, int y, int ch, const char *name, 
@@ -22,4 +23,10 @@ void Actor::update() {
 void Actor::render() const {
 	TCODConsole::root->setChar(x,y,ch);
 	TCODConsole::root->setCharForeground(x,y,col);
+}
+
+float Actor::getDistance(int cx, int cy) const {
+	int dx = x - cx;
+	int dy = y - cy;
+	return sqrtf(dx * dx + dy * dy);
 }
