@@ -8,6 +8,17 @@ bool Pickable::pick(Actor *owner, Actor *wearer) {
 	return false;
 }
 
+void Pickable::drop(Actor *owner, Actor *wearer) {
+	if(wearer->container) {
+		wearer->container->remove(owner);
+		engine.actors.push(owner);
+		owner->x = wearer->x;
+		owner->y = wearer->y;
+		engine.gui->message(TCODColor::lightGrey, "%s drops a %s.",
+			wearer->name, owner->name);
+	}
+}
+
 bool Pickable::use(Actor *owner, Actor *wearer) {
 	if(wearer->container) {
 		wearer->container->remove(owner);
@@ -53,7 +64,7 @@ Fireball::Fireball(float range, float damage) : LightningBolt(range, damage) {
 }
 
 bool Fireball::use(Actor *owner, Actor *wearer) {
-	engine.gui->message(TCODColor::cyan, "Left-click a target tile for the fireball, \nor right click to cancel.");
+	engine.gui->message(TCODColor::cyan, "Left-click a target tile for the fireball, \nor right-click to cancel.");
 	int x, y;
 	if(!engine.pickATile(&x, &y)) {
 		return false;
@@ -70,4 +81,26 @@ bool Fireball::use(Actor *owner, Actor *wearer) {
 		}
 	}
 	return Pickable::use(owner, wearer);
+}
+
+Confuser::Confuser(int nbTurns, float range) 
+	: nbTurns(nbTurns), range(range) {
+}
+
+bool Confuser::use(Actor *owner, Actor *wearer) {
+	engine.gui->message(TCODColor::cyan, "Left-click an enemy to confuse it,\nor right-click to cancel.");
+	int x, y;
+	if(!engine.pickATile(&x, &y, range)) {
+		return false;
+	}
+	Actor *actor = engine.getActor(x, y);
+	if(!actor) {
+		return false;
+	}
+	// confuse the monster for <nbTurns> turns
+	Ai *confusedAi = new ConfusedMonsterAi(nbTurns, actor->ai);
+	actor->ai = confusedAi;
+	engine.gui->message(TCODColor::lightGreen, "The eyes of the %s look vacant,\nas he starts to stumble around!", 
+		actor->name);
+	return Pickable::use(owner, wearer);	
 }
