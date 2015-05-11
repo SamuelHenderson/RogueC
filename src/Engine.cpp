@@ -27,20 +27,6 @@ void Engine::init(){
 	gui->message(TCODColor::red,
 		"Welcome stranger!\nPrepare to perish in the Tombs of the Ancient Kings.");
 }
-
-void Engine::save() {
-	if(player->destructible->isDead()) {
-		TCODSystem::deleteFile("game.sav");
-	} else {
-		TCODZip zip;
-		// save the map first
-		zip.putInt(map->width);
-		zip.putInt(map->height);
-		// TODO: RIGHT HERE... CONTINUE HERE
-	}
-}
-
-
 void Engine::update() {
 	if(gameStatus == STARTUP) map->computeFov();
 	gameStatus=IDLE;

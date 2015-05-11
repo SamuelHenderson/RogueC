@@ -3,7 +3,7 @@ struct Tile {
 	Tile() : explored(false) {}
 };
 
-class Map {
+class Map : public Persistent {
 public:
 	int width, height;
 	
@@ -17,6 +17,8 @@ public:
 	void render() const;
 	void addItem(int x, int y);
 	void init(bool withActors);
+	void save(TCODZip &zip);
+	void load(TCODZip &zip);
 protected:
 	Tile *tiles;
 	TCODMap *map;

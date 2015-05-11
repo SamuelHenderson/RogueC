@@ -1,10 +1,11 @@
-class Gui {
+class Gui : public Persistent {
 public:
 	Gui();
 	~Gui();
 	void render();
 	void message(const TCODColor &col, const char *text, ...);
-
+	void save(TCODZip &zip);
+	void load(TCODZip &zip);
 protected:
 	TCODConsole *con;
 	struct Message {
