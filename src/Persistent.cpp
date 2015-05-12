@@ -25,8 +25,24 @@ void Engine::save() {
 }
 
 void Engine::load() {
+	engine.gui->menu.clear();
+	engine.gui->menu.addItem(Menu::NEW_GAME, "New game");
 	if(TCODSystem::fileExists("game.sav")) {
+		engine.gui->menu.addItem(Menu::CONTINUE, "Continue");
+	}
+	engine.gui->menu.addItem(Menu::EXIT, "Exit");
+	Menu::MenuItemCode menuItem = engine.gui->menu.pick();
+	if(menuItem == Menu::EXIT || menuItem == Menu::NONE) {
+		// Exit or window closed
+		exit(0);
+	} else if(menuItem == Menu::NEW_GAME) {
+		// New game
+		engine.term();
+		engine.init();
+	} else {
 		TCODZip zip;
+		// continue a saved game
+		engine.term();
 		zip.loadFromFile("game.sav");
 		// load the map
 		int width = zip.getInt();
@@ -47,9 +63,9 @@ void Engine::load() {
 		}
 		// finally the message log
 		gui->load(zip);
-	} else {
-		engine.init();
-	}
+		// to force FOV recomputation
+		gameStatus=STARTUP;
+	} 
 }
 
 void Map::save(TCODZip &zip) {
