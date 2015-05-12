@@ -12,10 +12,13 @@ public:
 	TCOD_mouse_t mouse;
 	TCODList<Actor *> actors;
 	Actor *player;
+	Actor *stairs;
 	Map *map;
 	int fovRadius;
 	int screenWidth;
 	int screenHeight;
+	int level;
+	void nextLevel();
 	Gui *gui;
 	
 	Engine(int screenWidth, int screenHeight);

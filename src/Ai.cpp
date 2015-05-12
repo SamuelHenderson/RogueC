@@ -132,6 +132,13 @@ void PlayerAi::handleActionKey(Actor *owner, int ascii) {
 			}
 		}
 		break;
+		case '>': // stairs
+			if(engine.stairs->x == owner->x && engine.stairs->y == owner->y) {
+				engine.nextLevel();
+			} else {
+				engine.gui->message(TCODColor::lightGrey, "There are no stairs here.");
+			}
+		break;
 	}
 }
 

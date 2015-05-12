@@ -5,12 +5,15 @@ void Engine::save() {
 		TCODSystem::deleteFile("game.sav");
 	} else {
 		TCODZip zip;
+		zip.putInt(level);
 		// save the map first
 		zip.putInt(map->width);
 		zip.putInt(map->height);
 		map->save(zip);
-		//then the player
+		// then the player
 		player->save(zip);
+		// then the stairs
+		stairs->save(zip);
 		// then all the other actors
 		zip.putInt(actors.size()-1);
 		for(Actor **it=actors.begin(); it!= actors.end(); it++) {
@@ -44,6 +47,8 @@ void Engine::load() {
 		// continue a saved game
 		engine.term();
 		zip.loadFromFile("game.sav");
+
+		level = zip.getInt();
 		// load the map
 		int width = zip.getInt();
 		int height = zip.getInt();
@@ -51,8 +56,12 @@ void Engine::load() {
 		map->load(zip);
 		// then the player
 		player = new Actor(0,0,0, NULL, TCODColor::white);
-		player->load(zip);
 		actors.push(player);
+		player->load(zip);				
+		// the stairs
+		stairs = new Actor(0, 0, 0, NULL, TCODColor::white);
+		stairs->load(zip);
+		actors.push(stairs);
 		//then all the other actors
 		int nbActors = zip.getInt();
 		while(nbActors > 0) {

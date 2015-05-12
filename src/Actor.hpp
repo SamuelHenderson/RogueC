@@ -6,6 +6,7 @@ public:
 	TCODColor col; // color
 	
 	bool blocks; // Can we walk on this actor
+	bool fovOnly; // only display in fov
 	Attacker *attacker; // something that deals damage
 	Destructible *destructible; // something that can be damaged
 	Ai *ai;  // something self-updating

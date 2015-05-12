@@ -2,7 +2,7 @@
 
 Engine::Engine(int screenWidth, int screenHeight) : 
 	gameStatus(STARTUP), player(NULL), map(NULL), fovRadius(10), 
-	screenWidth(screenWidth), screenHeight(screenHeight) {
+	screenWidth(screenWidth), screenHeight(screenHeight), level(1) {
 
 	TCODConsole::initRoot(screenWidth, screenHeight, "libtcod C++ tutorial", false);
 	gui = new Gui();
@@ -28,6 +28,10 @@ void Engine::init(){
 	player->ai = new PlayerAi();
 	player->container = new Container(26);
 	actors.push(player);
+	stairs = new Actor(0, 0, '>', "stairs", TCODColor::white);
+	stairs->blocks = false;
+	stairs->fovOnly = false;
+	actors.push(stairs);
 	map = new Map(80,43);
 	map->init(true);
 	gui->message(TCODColor::red,
@@ -56,19 +60,19 @@ void Engine::update() {
 void Engine::render() {
 	TCODConsole::root->clear();
 	// draw the map
-	map->render();
-	// show the player's stats
-	gui->render();
+	map->render();	
 	// draw the actors
 	for (Actor **iterator=actors.begin(); iterator != actors.end(); iterator++) {
 		Actor *actor = *iterator;
-		if(actor != player && map -> isInFov(actor->x, actor->y)) {
+		if(actor != player 
+			&& ((!actor->fovOnly && map->isExplored(actor->x, actor->y)) || 
+				map->isInFov(actor->x, actor->y))) {
 			actor -> render();
 		}
 	}
 	player->render();
 	// show the player's stats
-	TCODConsole::root->print(1, screenHeight-2, "HP: %d/%d", (int)player->destructible->hp, (int)player->destructible->maxHp);
+	gui->render();
 	
 }
 
@@ -134,4 +138,24 @@ Actor *Engine::getActor(int x, int y) const {
 		}
 	}
 	return NULL;
+}
+
+void Engine::nextLevel() {
+	level++;
+	gui->message(TCODColor::lightViolet, "You take a moment to rest, and recover your strength.");
+	player->destructible->heal(player->destructible->maxHp / 2);
+	gui->message(TCODColor::red, "After a rare moment of peace, you decend\ndeeper into the heart of the dungeon...");
+
+	delete map;
+	for(Actor **it=actors.begin(); it!=actors.end(); it++) {
+		if(*it != player && *it != stairs) {
+			delete *it;
+			it = actors.remove(it);
+		}
+	}
+
+	// create a new map
+	map = new Map(80,43);
+	map->init(true);
+	gameStatus=STARTUP;
 }
