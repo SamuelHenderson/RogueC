@@ -64,10 +64,8 @@ void Engine::render() {
 	// draw the actors
 	for (Actor **iterator=actors.begin(); iterator != actors.end(); iterator++) {
 		Actor *actor = *iterator;
-		if(actor != player 
-			&& ((!actor->fovOnly && map->isExplored(actor->x, actor->y)) || 
-				map->isInFov(actor->x, actor->y))) {
-			actor -> render();
+		if(actor != player && ((!actor->fovOnly && map->isExplored(actor->x, actor->y)) || 	map->isInFov(actor->x, actor->y))) {
+			actor->render();
 		}
 	}
 	player->render();
