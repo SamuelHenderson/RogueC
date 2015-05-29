@@ -82,7 +82,7 @@ void Gui::renderBar(int x, int y, int width, const char *name,
 }
 
 Gui::Message::Message(const char *text, const TCODColor &col) :
-	text(_strdup(text)), col(col) {
+	text(strdup(text)), col(col) {
 }
 
 Gui::Message::~Message() {
@@ -101,11 +101,11 @@ void Gui::renderMouseLook() {
 		// find actors under the mouse cursor
 		if(actor->x == engine.mouse.cx && actor->y == engine.mouse.cy) {
 			if(!first) {
-				strcat_s(buf, ", ");
+				strcat(buf, ", ");
 			} else {
 				first = false;
 			}
-			strcat_s(buf, actor->name);
+			strcat(buf, actor->name);
 		}
 	}
 	// display the list of actors under the mouse cursor
@@ -118,7 +118,7 @@ void Gui::message(const TCODColor & col, const char *text, ...) {
 	va_list ap;
 	char buf[128];
 	va_start(ap, text);
-	vsprintf_s(buf, text, ap);
+	vsprintf(buf, text, ap);
 	va_end(ap);
 
 	char *lineBegin = buf;
